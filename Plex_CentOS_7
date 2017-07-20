@@ -1,0 +1,33 @@
+yum -y clean all
+yum -y update
+yum -y install perl net-tools iptables-services wget nano open-vm-tools -y
+~~Reboot~~
+iptables -P INPUT ACCEPT
+iptables -F
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -i lo -j ACCEPT
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT -p tcp --dport 21 -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+iptables -A INPUT -p tcp --dport 32400 -j ACCEPT
+iptables -A INPUT -p udp --dport 32400 -j ACCEPT
+iptables -A INPUT -p udp --dport 32410 -j ACCEPT
+iptables -A INPUT -p udp --dport 32413 -j ACCEPT
+iptables -A INPUT -p udp --dport 32414 -j ACCEPT
+iptables -A INPUT -p udp --dport 32469 -j ACCEPT
+iptables -A INPUT -p udp --dport 5353 -d 224.0.0.251 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 5353 -d 224.0.0.251 -j ACCEPT
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+iptables -L -v
+systemctl enable iptables
+systemctl start iptables
+mkdir /Plex
+cd /Plex
+wget https://downloads.plex.tv/plex-media-server/1.0.3.2461-35f0caa/plexmediaserver-1.0.3.2461-35f0caa.x86_64.rpm
+rpm -ivh plexmediaserver-1.0.3.2461-35f0caa.x86_64.rpm
+systemctl enable plexmediaserver
+systemctl start plexmediaserver
